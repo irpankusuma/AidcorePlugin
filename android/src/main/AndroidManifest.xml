@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.asriworks.irpankusuma.aidcore_plugin">
+
+  <uses-permission android:name="android.permission.NFC"/>
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+  <uses-permission android:name="android.permission.BLUETOOTH" />
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+  <uses-feature android:name="android.hardware.nfc" />
+  <uses-feature android:name="android.hardware.bluetooth" />
+</manifest>
