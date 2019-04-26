@@ -24,6 +24,8 @@ import android.print.PrintManager;
 import android.print.PrintDocumentAdapter;
 import android.webkit.WebView;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +37,8 @@ import java.util.UUID;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /** AidcorePlugin */
@@ -73,7 +77,7 @@ public class AidcorePlugin implements MethodCallHandler {
   private static final byte[] ESC_ALIGN_CENTER = new byte[]{0x1b, 'a', 0x01};
   private static final byte[] ESC_ALIGN_RIGHT = new byte[]{0x1b, 'a', 0x02};
   private static final byte[] ESC_ALIGN_LEFT = new byte[]{0x1b, 'a', 0x00};
-  
+
   
   @Override
   public void onMethodCall(MethodCall call, Result result) {
@@ -144,28 +148,10 @@ public class AidcorePlugin implements MethodCallHandler {
       }
       case "PrintImage":
       {
-        Log.d("PRINT IMAGE","PROCESSING");
-        Bitmap bitmap = call.argument("bitmap");
-        InitialPrinter("Virtual Bluetooth Printer");
-        printText("CONTON PRINT IMAGE");
-        addNewLines(1);
-        printImage(bitmap);
-        finish();
-        Log.d("PRINT IMAGE","FINISH");
-      }
-      case "PrintBitmap":
-      {
-        Log.d("PRINT BITMAP","PRINT BITMAP ------->>>>>>>>>");
-        String printerName = call.argument("printerName");
-        Log.d("PRINT BITMAP",printerName);
-        Bitmap img = call.argument("bitmapImage");
-        PrintBitmap(printerName, img);
-      }
-      case "IntentPrint":
-      {
-        String printerName = call.argument("printerName");
-        String text = call.argument("text");
-        IntentPrint(text, printerName);
+        byte[] bytes = call.argument("bytes");
+        result.success("PRINT IMAGE : "+ bytes.toString());
+        Log.d("LOG","IMAGE : "+bytes.toString());
+        printUnicode(bytes);
       }
       case "Finish":
       {
@@ -173,6 +159,11 @@ public class AidcorePlugin implements MethodCallHandler {
       }
     }
   }
+
+/**
+ * 
+ * @param QRCode
+ */
 
   /**
    * @param reportString
@@ -187,13 +178,11 @@ public class AidcorePlugin implements MethodCallHandler {
     String jobName = "Pdf View Print Test";
 
     PrintAttributes attrib = new PrintAttributes.Builder().
-            setMediaSize(PrintAttributes.MediaSize.NA_LETTER.asLandscape()).
-            setMinMargins(PrintAttributes.Margins.NO_MARGINS).
-            build();
+      setMediaSize(PrintAttributes.MediaSize.NA_LETTER.asLandscape()).
+      setMinMargins(PrintAttributes.Margins.NO_MARGINS).
+      build();
     printManager.print(jobName, printAdapter, attrib);
   }
-
-
 
   /**
    * 
@@ -202,72 +191,73 @@ public class AidcorePlugin implements MethodCallHandler {
    * Print to Blutooth printer
    * https://medium.com/@thejohnoke/bluetooth-printing-with-android-e79c64044fc9
    */
-  public void IntentPrint(String txtvalue, String printerName){
-    InitialPrinter(printerName);
+  // public void IntentPrint(String txtvalue, String printerName){
+  //   InitialPrinter(printerName);
 
-    byte[] buffer = txtvalue.getBytes();
-    byte[] PrintHeader = { (byte) 0xAA,0x55,2,0 };
-    PrintHeader[3]=(byte) buffer.length;
+  //   byte[] buffer = txtvalue.getBytes();
+  //   byte[] PrintHeader = { (byte) 0xAA,0x55,2,0 };
+  //   PrintHeader[3]=(byte) buffer.length;
     
-    if(PrintHeader.length>128){
-      Log.d("log","Value more than 128 characters.");
-      _result = "Value more than 128 characters";
-    } else {
-      try {
-        outputStream.write(txtvalue.getBytes());
-        outputStream.close();
-        socket.close();
-      } catch(Exception ex){
-        Log.d("log",ex.toString());
-      }
-    }
-  }
+  //   if(PrintHeader.length>128){
+  //     Log.d("log","Value more than 128 characters.");
+  //     _result = "Value more than 128 characters";
+  //   } else {
+  //     try {
+  //       outputStream.write(txtvalue.getBytes());
+  //       outputStream.close();
+  //       socket.close();
+  //     } catch(Exception ex){
+  //       Log.d("log",ex.toString());
+  //     }
+  //   }
+  // }
 
   /**
    * Print Bitmap
    */
-  public void PrintBitmap(String printerName, Bitmap img){
-    InitialPrinter(printerName);
-    setAlign(AidcorePlugin.ALIGN_CENTER);
-    printImage(img);
-    finish();
-  }
+  // public void PrintBitmap(String printerName, byte[] img){
+  //   InitialPrinter(printerName);
+  //   setAlign(AidcorePlugin.ALIGN_CENTER);
+  //   Log.d("PRINT BITMAP",img.toString());
+  //   printUnicode(img);
+  //   finish();
+  // }
 
   /**
    * Example Print
    */
-  public void ExamplePrint(String printerName){
-    Log.d("EXAMPLE PRINT",printerName);
-    InitialPrinter(printerName);
-    setAlign(AidcorePlugin.ALIGN_CENTER);
-    addNewLines(2);
-    setBold(true);
-    printText("---------------------------------------");
-    addNewLines(1);
-    printText("---------- KEMERDEKAAN PRINT ----------");
-    addNewLines(1);
-    printText("----------- 17-Agustus-1945 -----------");
-    addNewLines(1);
-    printText("---------------------------------------");
-    addNewLines(1);
-    setBold(false);
-    printText("Quantity       : 0");
-    addNewLines(1);
-    printText("Harga Satuan   : 1,00");
-    addNewLines(1);
-    printText("Total          : 1,00");
-    addNewLines(1);
-    setBold(true);
-    printText("---------------------------------------");
-    addNewLines(1);
-    printText("---------- THANKS ----------");
-    addNewLines(1);
-    printText("----------- 17-Agustus-1945 -----------");
-    addNewLines(1);
-    printText("---------------------------------------");
-    addNewLines(1);
-    setBold(false);
-  }
+  // public void ExamplePrint(String printerName){
+  //   Log.d("EXAMPLE PRINT",printerName);
+  //   InitialPrinter(printerName);
+  //   setAlign(AidcorePlugin.ALIGN_CENTER);
+  //   addNewLines(2);
+  //   setBold(true);
+  //   printText("---------------------------------------");
+  //   addNewLines(1);
+  //   printText("---------- KEMERDEKAAN PRINT ----------");
+  //   addNewLines(1);
+  //   printText("----------- 17-Agustus-1945 -----------");
+  //   addNewLines(1);
+  //   printText("---------------------------------------");
+  //   addNewLines(1);
+  //   setBold(false);
+  //   printText("Quantity       : 0");
+  //   addNewLines(1);
+  //   printText("Harga Satuan   : 1,00");
+  //   addNewLines(1);
+  //   printText("Total          : 1,00");
+  //   addNewLines(1);
+  //   setBold(true);
+  //   printText("---------------------------------------");
+  //   addNewLines(1);
+  //   printText("---------- THANKS ----------");
+  //   addNewLines(1);
+  //   printText("----------- 17-Agustus-1945 -----------");
+  //   addNewLines(1);
+  //   printText("---------------------------------------");
+  //   addNewLines(1);
+  //   setBold(false);
+  // }
 
   /**
    * 
@@ -305,6 +295,7 @@ public class AidcorePlugin implements MethodCallHandler {
 
   public boolean printUnicode(byte[] data){
     try {
+      Log.d("PRINT UNICODE", data.toString());
       outputStream.write(data);
       workerThread.sleep(50);
       return true;
@@ -334,24 +325,24 @@ public class AidcorePlugin implements MethodCallHandler {
   public void setAlign(int alignType) {
     byte[] d;
     switch (alignType) {
-        case ALIGN_CENTER:
-            d = ESC_ALIGN_CENTER;
-            break;
-        case ALIGN_LEFT:
-            d = ESC_ALIGN_LEFT;
-            break;
-        case ALIGN_RIGHT:
-            d = ESC_ALIGN_RIGHT;
-            break;
-        default:
-            d = ESC_ALIGN_LEFT;
-            break;
+      case ALIGN_CENTER:
+        d = ESC_ALIGN_CENTER;
+        break;
+      case ALIGN_LEFT:
+        d = ESC_ALIGN_LEFT;
+        break;
+      case ALIGN_RIGHT:
+        d = ESC_ALIGN_RIGHT;
+        break;
+      default:
+        d = ESC_ALIGN_LEFT;
+        break;
     }
 
     try {
-        outputStream.write(d);
+      outputStream.write(d);
     } catch (IOException e) {
-        e.printStackTrace();
+      e.printStackTrace();
     }
   }
 
@@ -361,8 +352,8 @@ public class AidcorePlugin implements MethodCallHandler {
   }
 
   public void setBold(boolean bold) {
-      byte[] cmd = new byte[]{0x1B, 0x45, bold ? (byte) 1 : 0};
-      printUnicode(cmd);
+    byte[] cmd = new byte[]{0x1B, 0x45, bold ? (byte) 1 : 0};
+    printUnicode(cmd);
   }
 
 
@@ -382,27 +373,26 @@ public class AidcorePlugin implements MethodCallHandler {
     }
 
     for (int i = 0; i < bmpHeight; i++) {
-        sb = new StringBuffer();
-        for (int j = 0; j < bmpWidth; j++) {
-            int color = bmp.getPixel(j, i);
-            int r = (color >> 16) & 0xff;
-            int g = (color >> 8) & 0xff;
-            int b = color & 0xff;
-            if (r > 160 && g > 160 && b > 160) sb.append("0");
-            else sb.append("1");
-        }
-        if (zeroCount > 0) sb.append(zeroStr);
-        list.add(sb.toString());
+      sb = new StringBuffer();
+      for (int j = 0; j < bmpWidth; j++) {
+        int color = bmp.getPixel(j, i);
+        int r = (color >> 16) & 0xff;
+        int g = (color >> 8) & 0xff;
+        int b = color & 0xff;
+        if (r > 160 && g > 160 && b > 160) sb.append("0");
+        else sb.append("1");
+      }
+      if (zeroCount > 0) sb.append(zeroStr);
+      list.add(sb.toString());
     }
 
     List<String> bmpHexList = binaryListToHexStringList(list);
     String commandHexString = "1D763000";
-    String widthHexString = Integer
-            .toHexString(bmpWidth % 8 == 0 ? bmpWidth / 8 : (bmpWidth / 8 + 1));
+    String widthHexString = Integer.toHexString(bmpWidth % 8 == 0 ? bmpWidth / 8 : (bmpWidth / 8 + 1));
     if (widthHexString.length() > 2) {
-        return null;
+      return null;
     } else if (widthHexString.length() == 1) {
-        widthHexString = "0" + widthHexString;
+      widthHexString = "0" + widthHexString;
     }
     widthHexString = widthHexString + "00";
 
@@ -500,35 +490,35 @@ public class AidcorePlugin implements MethodCallHandler {
    */
   private static String encodeNonAscii(String text) {
     return text.replace('á', 'a')
-            .replace('č', 'c')
-            .replace('ď', 'd')
-            .replace('é', 'e')
-            .replace('ě', 'e')
-            .replace('í', 'i')
-            .replace('ň', 'n')
-            .replace('ó', 'o')
-            .replace('ř', 'r')
-            .replace('š', 's')
-            .replace('ť', 't')
-            .replace('ú', 'u')
-            .replace('ů', 'u')
-            .replace('ý', 'y')
-            .replace('ž', 'z')
-            .replace('Á', 'A')
-            .replace('Č', 'C')
-            .replace('Ď', 'D')
-            .replace('É', 'E')
-            .replace('Ě', 'E')
-            .replace('Í', 'I')
-            .replace('Ň', 'N')
-            .replace('Ó', 'O')
-            .replace('Ř', 'R')
-            .replace('Š', 'S')
-            .replace('Ť', 'T')
-            .replace('Ú', 'U')
-            .replace('Ů', 'U')
-            .replace('Ý', 'Y')
-            .replace('Ž', 'Z');
+      .replace('č', 'c')
+      .replace('ď', 'd')
+      .replace('é', 'e')
+      .replace('ě', 'e')
+      .replace('í', 'i')
+      .replace('ň', 'n')
+      .replace('ó', 'o')
+      .replace('ř', 'r')
+      .replace('š', 's')
+      .replace('ť', 't')
+      .replace('ú', 'u')
+      .replace('ů', 'u')
+      .replace('ý', 'y')
+      .replace('ž', 'z')
+      .replace('Á', 'A')
+      .replace('Č', 'C')
+      .replace('Ď', 'D')
+      .replace('É', 'E')
+      .replace('Ě', 'E')
+      .replace('Í', 'I')
+      .replace('Ň', 'N')
+      .replace('Ó', 'O')
+      .replace('Ř', 'R')
+      .replace('Š', 'S')
+      .replace('Ť', 'T')
+      .replace('Ú', 'U')
+      .replace('Ů', 'U')
+      .replace('Ý', 'Y')
+      .replace('Ž', 'Z');
 }
   
 
@@ -627,5 +617,79 @@ public class AidcorePlugin implements MethodCallHandler {
     } catch(Exception ex){
       ex.printStackTrace();
     }
+  }
+
+  /**
+   * Compute bytes for printing QR code
+   *     
+   * @link Adapted from https://stackoverflow.com/questions/23577702/printing-qr-codes-through-an-esc-pos-thermal-printer/#29221432
+   * @param content Contents of QR code
+   * @return Bytes for command to send to printer
+   */
+  public static byte[] qrCode(String content) {
+    Log.d("qrCode",content);
+    HashMap commands = new HashMap();
+    String[] commandSequence = {"model", "size", "error", "store", "content", "print"};
+    int contentLen = content.length();
+    int resultLen = 0;
+    byte[] command;
+
+    // QR Code: Select the model
+    //              Hex     1D      28      6B      04      00      31      41      n1(x32)     n2(x00) - size of model
+    // set n1 [49 x31, model 1] [50 x32, model 2] [51 x33, micro qr code]
+    // https://reference.epson-biz.com/modules/ref_escpos/index.php?content_id=140
+    command = new byte[]{(byte) 0x1d, (byte) 0x28, (byte) 0x6b, (byte) 0x04, (byte) 0x00, (byte) 0x31, (byte) 0x41, (byte) 0x32, (byte) 0x00};
+    commands.put("model", command);
+    resultLen += command.length;
+
+    // QR Code: Set the size of module
+    // Hex      1D      28      6B      03      00      31      43      n
+    // n depends on the printer
+    // https://reference.epson-biz.com/modules/ref_escpos/index.php?content_id=141
+    command = new byte[]{(byte) 0x1d, (byte) 0x28, (byte) 0x6b, (byte) 0x03, (byte) 0x00, (byte) 0x31, (byte) 0x43, (byte) 0x06};
+    commands.put("size", command);
+    resultLen += command.length;
+
+    //          Hex     1D      28      6B      03      00      31      45      n
+    // Set n for error correction [48 x30 -> 7%] [49 x31-> 15%] [50 x32 -> 25%] [51 x33 -> 30%]
+    // https://reference.epson-biz.com/modules/ref_escpos/index.php?content_id=142
+    command = new byte[]{(byte) 0x1d, (byte) 0x28, (byte) 0x6b, (byte) 0x03, (byte) 0x00, (byte) 0x31, (byte) 0x45, (byte) 0x33};
+    commands.put("error", command);
+    resultLen += command.length;
+
+    // QR Code: Store the data in the symbol storage area
+    // Hex      1D      28      6B      pL      pH      31      50      30      d1...dk
+    // https://reference.epson-biz.com/modules/ref_escpos/index.php?content_id=143
+    //                        1D          28          6B         pL          pH  cn(49->x31) fn(80->x50) m(48->x30) d1…dk
+    int storeLen = contentLen + 3;
+    byte store_pL = (byte) (storeLen % 256);
+    byte store_pH = (byte) (storeLen / 256);
+    command = new byte[]{(byte) 0x1d, (byte) 0x28, (byte) 0x6b, store_pL, store_pH, (byte) 0x31, (byte) 0x50, (byte) 0x30};
+    commands.put("store", command);
+    resultLen += command.length;
+
+    // QR Code content
+    command = content.getBytes();
+    commands.put("content", command);
+    resultLen += command.length;
+
+    // QR Code: Print the symbol data in the symbol storage area
+    // Hex      1D      28      6B      03      00      31      51      m
+    // https://reference.epson-biz.com/modules/ref_escpos/index.php?content_id=144
+    command = new byte[]{(byte) 0x1d, (byte) 0x28, (byte) 0x6b, (byte) 0x03, (byte) 0x00, (byte) 0x31, (byte) 0x51, (byte) 0x30};
+    commands.put("print", command);
+    resultLen += command.length;
+
+    int cnt = 0;
+    int commandLen = 0;
+    byte[] result = new byte[resultLen];
+    for (String currCommand : commandSequence) {
+        command = (byte[]) commands.get(currCommand);
+        commandLen = command.length;
+        System.arraycopy(command, 0, result, cnt, commandLen);
+        cnt += commandLen;
+    }
+
+    return result;
   }
 }

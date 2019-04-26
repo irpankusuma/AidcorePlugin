@@ -22,7 +22,8 @@ class _MyAppState extends State<MyApp> {
 
   bool inside = false;
   Uint8List imageInMemory;
-
+  Uint8List image;
+  
   TextEditingController _printerName = new TextEditingController();
   TextEditingController _messagePrint = new TextEditingController();
 
@@ -40,12 +41,12 @@ class _MyAppState extends State<MyApp> {
       RenderRepaintBoundary boundary =
           _globalKey.currentContext.findRenderObject();
       ui.Image image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData byteData =
-          await image.toByteData(format: ui.ImageByteFormat.png);
+      // ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
-//      String bs64 = base64Encode(pngBytes);
-//      print(pngBytes);
-//      print(bs64);
+     String bs64 = base64Encode(pngBytes);
+     print(pngBytes);
+     print(bs64);
       print('png done');
       setState(() {
         imageInMemory = pngBytes;
@@ -105,22 +106,17 @@ class _MyAppState extends State<MyApp> {
     await(AidcorePlugin.printText(text:"DISINI PAKE BARCODE"));
     await(AidcorePlugin.addNewLines(count:3));
     await(AidcorePlugin.printText(text:"------------------------------"));
-    await(AidcorePlugin.addNewLines(count:1));
-    await(AidcorePlugin.printText(text:"Kata-kata cantik bahasa indonesia dan inggris"));
     await(AidcorePlugin.finish());
   }
 
-  void printImage() async {
-    await (AidcorePlugin.printBitmap(bitmap: imageInMemory,printerName: _printerName.text));
-  }
-
   void webPrint() async {
-    String html = "<h1>Test H1</h1><br /><h2>Test H2</h2>";
-    final String result = await(AidcorePlugin.pdfView(html));
+    return await(AidcorePlugin.pdfView(_printerName.text));
   }
 
-  void intentPrint() async {
-    await (AidcorePlugin.intentPrint(printerName: _printerName.text, text: _messagePrint.text));
+  void imagePrint() async {
+    await(AidcorePlugin.init(printerName:_printerName.text));
+    await(AidcorePlugin.printImage(imgBytes:imageInMemory));
+    await(AidcorePlugin.finish());
   }
 
   @override
@@ -144,11 +140,6 @@ class _MyAppState extends State<MyApp> {
                   controller: _messagePrint,
                 ),
                 new RaisedButton(
-                  color: Colors.black,
-                  child: new Text('INTENT PRINT', style: TextStyle(color:Colors.white),),
-                  onPressed: () => intentPrint()
-                ),
-                new RaisedButton(
                   child: new Text('EXAMPLE PRINT'),
                   onPressed: () => examplePrint()
                 ),
@@ -157,14 +148,14 @@ class _MyAppState extends State<MyApp> {
                   child: new Text('WEB PRINT PDF', style: TextStyle(color:Colors.white),),
                   onPressed: () => webPrint(),
                 ),
-                new RaisedButton(
-                  color: Colors.green,
-                  child: new Text('PRINT IMAGE', style: TextStyle(color:Colors.white),),
-                  onPressed: () => printImage(),
+                 new RaisedButton(
+                  color: Colors.yellow,
+                  child: new Text('PRINT CAPTURE', style: TextStyle(color:Colors.black),),
+                  onPressed: () => imagePrint(),
                 ),
                 new RaisedButton(
                   color: Colors.red,
-                  child: Text('CAPTURE IMAGE'),
+                  child: Text('CAPTURE IMAGE', style: TextStyle(color:Colors.white),),
                   onPressed: _capturePng,
                 ),
                 inside ? CircularProgressIndicator()
