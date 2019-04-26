@@ -111,12 +111,16 @@ class _MyAppState extends State<MyApp> {
   }
 
   void printImage() async {
-    await (AidcorePlugin.printImage(bitmap:imageInMemory));
+    await (AidcorePlugin.printBitmap(bitmap: imageInMemory,printerName: _printerName.text));
   }
 
   void webPrint() async {
     String html = "<h1>Test H1</h1><br /><h2>Test H2</h2>";
     final String result = await(AidcorePlugin.pdfView(html));
+  }
+
+  void intentPrint() async {
+    await (AidcorePlugin.intentPrint(printerName: _printerName.text, text: _messagePrint.text));
   }
 
   @override
@@ -127,9 +131,10 @@ class _MyAppState extends State<MyApp> {
         key: _globalKey,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Aidcore Plugin Example'),
+            title: const Text('Plugin Example'),
           ),
           body: new Container(
+            margin: EdgeInsets.all(5.0),
             child: new ListView(
               children: <Widget>[
                 new TextField(
@@ -137,6 +142,11 @@ class _MyAppState extends State<MyApp> {
                 ),
                 new TextField(
                   controller: _messagePrint,
+                ),
+                new RaisedButton(
+                  color: Colors.black,
+                  child: new Text('INTENT PRINT', style: TextStyle(color:Colors.white),),
+                  onPressed: () => intentPrint()
                 ),
                 new RaisedButton(
                   child: new Text('EXAMPLE PRINT'),

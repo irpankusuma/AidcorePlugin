@@ -17,7 +17,7 @@ class AidcorePlugin {
       'printerName': printerName
     };
     
-    String result = await _channel.invokeMethod('Init');
+    String result = await _channel.invokeMethod('Init',params);
     return result;
   }
 
@@ -26,7 +26,7 @@ class AidcorePlugin {
       'align': align
     };
     
-    String result = await _channel.invokeMethod('SetAlign');
+    String result = await _channel.invokeMethod('SetAlign',params);
     return result;
   }
 
@@ -35,7 +35,7 @@ class AidcorePlugin {
       'text': text
     };
     
-    String result = await _channel.invokeMethod('PrintText');
+    String result = await _channel.invokeMethod('PrintText',params);
     return result;
   }
 
@@ -44,7 +44,7 @@ class AidcorePlugin {
       'count': count
     };
     
-    String result = await _channel.invokeMethod('AddNewLines');
+    String result = await _channel.invokeMethod('AddNewLines',params);
     return result;
   }
 
@@ -53,7 +53,7 @@ class AidcorePlugin {
       'line': line
     };
     
-    String result = await _channel.invokeMethod('SetLineSpacing');
+    String result = await _channel.invokeMethod('SetLineSpacing',params);
     return result;
   }
 
@@ -62,7 +62,7 @@ class AidcorePlugin {
       'bold': bold
     };
     
-    String result = await _channel.invokeMethod('SetBold');
+    String result = await _channel.invokeMethod('SetBold',params);
     return result;
   }
 
@@ -71,7 +71,36 @@ class AidcorePlugin {
       'bitmap': bitmap
     };
     
-    String result = await _channel.invokeMethod('PrintImage');
+    String result = await _channel.invokeMethod('PrintImage',params);
+    return result;
+  }
+
+  static Future<String> printBitmap({ @required String printerName, @required Uint8List  bitmap }) async {
+    final Map<String, dynamic> params = <String,dynamic>{
+      'printerName': printerName,
+      'bitmapImage': bitmap
+    };
+    
+    String result = await _channel.invokeMethod('PrintBitmap',params);
+    return result;
+  }
+
+  static Future<String> examplePrint({ @required String printerName }) async {
+    final Map<String, dynamic> params = <String,dynamic>{
+      'printerName': printerName,
+    };
+    
+    String result = await _channel.invokeMethod('ExamplePrint',params);
+    return result;
+  }
+
+  static Future<String> intentPrint({ @required String printerName, String text }) async {
+    final Map<String, dynamic> params = <String,dynamic>{
+      'printerName': printerName,
+      'text': text
+    };
+    
+    String result = await _channel.invokeMethod('IntentPrint',params);
     return result;
   }
 

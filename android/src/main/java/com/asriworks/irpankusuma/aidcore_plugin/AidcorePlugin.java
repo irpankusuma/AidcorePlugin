@@ -100,38 +100,46 @@ public class AidcorePlugin implements MethodCallHandler {
       {
         String printerName = call.argument("printerName");
         InitialPrinter(printerName);
-        result.success(null);
+        result.success("INITIAL PRINTER");
       }
       case "SetAlign":
       {
         String align = call.argument("align");
         if(align == "center"){
           setAlign(AidcorePlugin.ALIGN_CENTER);
+          result.success("CENTER");
         } else if(align == "right"){
           setAlign(AidcorePlugin.ALIGN_RIGHT);
+          result.success("RIGHT");
         } else if(align == "left"){
           setAlign(AidcorePlugin.ALIGN_LEFT);
+          result.success("LEFT");
         } else {
           setAlign(AidcorePlugin.ALIGN_LEFT);
+          result.success("LEFT");
         }
       }
       case "PrintText":
       {
         String text = call.argument("text");
+        result.success("PRINT TEXT : "+text);
         printText(text);
       }
       case "AddNewLines":
       {
         int count = call.argument("count");
+        result.success("PRINT NEW LINE");
         addNewLines(count);
       }
       case "SetLineSpacing":{
         int line = call.argument("line");
+        result.success("PRINT SET LINE SPACING");
         setLineSpacing(line);
       }
       case "SetBold":
       {
         Boolean bold = call.argument("bold");
+        result.success("PRINT SET BOLD");
         setBold(bold);
       }
       case "PrintImage":
@@ -144,6 +152,20 @@ public class AidcorePlugin implements MethodCallHandler {
         printImage(bitmap);
         finish();
         Log.d("PRINT IMAGE","FINISH");
+      }
+      case "PrintBitmap":
+      {
+        Log.d("PRINT BITMAP","PRINT BITMAP ------->>>>>>>>>");
+        String printerName = call.argument("printerName");
+        Log.d("PRINT BITMAP",printerName);
+        Bitmap img = call.argument("bitmapImage");
+        PrintBitmap(printerName, img);
+      }
+      case "IntentPrint":
+      {
+        String printerName = call.argument("printerName");
+        String text = call.argument("text");
+        IntentPrint(text, printerName);
       }
       case "Finish":
       {
@@ -199,6 +221,52 @@ public class AidcorePlugin implements MethodCallHandler {
         Log.d("log",ex.toString());
       }
     }
+  }
+
+  /**
+   * Print Bitmap
+   */
+  public void PrintBitmap(String printerName, Bitmap img){
+    InitialPrinter(printerName);
+    setAlign(AidcorePlugin.ALIGN_CENTER);
+    printImage(img);
+    finish();
+  }
+
+  /**
+   * Example Print
+   */
+  public void ExamplePrint(String printerName){
+    Log.d("EXAMPLE PRINT",printerName);
+    InitialPrinter(printerName);
+    setAlign(AidcorePlugin.ALIGN_CENTER);
+    addNewLines(2);
+    setBold(true);
+    printText("---------------------------------------");
+    addNewLines(1);
+    printText("---------- KEMERDEKAAN PRINT ----------");
+    addNewLines(1);
+    printText("----------- 17-Agustus-1945 -----------");
+    addNewLines(1);
+    printText("---------------------------------------");
+    addNewLines(1);
+    setBold(false);
+    printText("Quantity       : 0");
+    addNewLines(1);
+    printText("Harga Satuan   : 1,00");
+    addNewLines(1);
+    printText("Total          : 1,00");
+    addNewLines(1);
+    setBold(true);
+    printText("---------------------------------------");
+    addNewLines(1);
+    printText("---------- THANKS ----------");
+    addNewLines(1);
+    printText("----------- 17-Agustus-1945 -----------");
+    addNewLines(1);
+    printText("---------------------------------------");
+    addNewLines(1);
+    setBold(false);
   }
 
   /**
