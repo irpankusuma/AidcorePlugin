@@ -1,6 +1,8 @@
 name: aidcore_plugin_example
-description: Demonstrates how to use the aidcore_plugin plugin.
+description: Bluetooth print to thermal printer
 publish_to: 'none'
+authors: irpankusuma@gmail.com
+homepage: https://github.com/irpankusuma
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

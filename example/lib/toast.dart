@@ -15,7 +15,7 @@ class BlinkingToast {
       {@required BuildContext context,
       Duration duration = const Duration(seconds: 2),
       Offset position = Offset.zero,
-      String message = null,
+      String message = '',
       String status = 'info'}) async {
     // Prevent from showing multiple Widgets at the same time
     if (_isVisible) {
@@ -112,8 +112,6 @@ class _BlinkingToastWidgetState extends State<BlinkingToastWidget>
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-
     return new IntrinsicHeight(
       child: Stack(
         children: <Widget>[

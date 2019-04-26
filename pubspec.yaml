@@ -1,8 +1,8 @@
 name: aidcore_plugin
-description: A new flutter plugin project.
+description: Connect bluetooth printer thermal then print like assembler.
 version: 0.0.1
-author:
-homepage:
+author: irpankusuma@gmail.com
+homepage: https://github.com/irpankusuma
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

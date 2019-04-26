@@ -3,8 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-
 
 class AidcorePlugin {
   static const MethodChannel _channel = const MethodChannel('aidcore_plugin');

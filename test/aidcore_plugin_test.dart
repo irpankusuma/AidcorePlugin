@@ -16,6 +16,6 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    expect(await AidcorePlugin.platformVersion, '42');
+    expect(await AidcorePlugin.pdfView("TEST--TEST--TEST--TEST"), '42');
   });
 }

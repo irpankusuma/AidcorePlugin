@@ -9,8 +9,8 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 // https://medium.com/@thejohnoke/bluetooth-printing-with-android-e79c64044fc9
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+// import android.support.v7.app.AppCompatActivity;
+// import android.os.Bundle;
 import android.util.Log;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -24,8 +24,8 @@ import android.print.PrintManager;
 import android.print.PrintDocumentAdapter;
 import android.webkit.WebView;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+// import java.io.ByteArrayInputStream;
+// import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,8 +35,8 @@ import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.UUID;
 import java.util.Arrays;
-import java.util.Locale;
-import java.util.Objects;
+// import java.util.Locale;
+// import java.util.Objects;
 import java.util.HashMap;
 import java.util.Map;
 
